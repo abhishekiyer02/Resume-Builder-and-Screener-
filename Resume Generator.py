@@ -43,7 +43,7 @@ def sidebar_bg(side_bg):
       f"""
       <style>
       [data-testid="stSidebar"] > div:first-child {{
-        background-color: #E5CCFF;
+        background-color: #1f1652;
         
         
       }}
@@ -113,6 +113,8 @@ def main():
             'div.css-zt5igj {font-size:50}'+\
             'div.stMarkdown span.css-10trblm {  color: #E5CCFF; }' +\
             'div.css-8u98yl section.css-vjj2ce { background-color: #E5CCFF;  color: black}' +\
+            'span.css-pkbazv { color: #E5CCFF;}'+\
+            'span.css-17lntkn { color:#E5CCFF;}'+\
             '</style>', unsafe_allow_html=True)
 
     name = st.text_input("Name:")
