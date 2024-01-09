@@ -4,6 +4,7 @@ import re
 import nltk
 from googleapiclient.discovery import build
 from urllib.parse import urlparse, parse_qs
+import base64
 
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -57,16 +58,90 @@ def search_youtube_videos(query, max_results=1):
         return video_id1, video_title1,video_id2, video_title2
     return None, None
 
+#  background: url(data:image/{side_bg_ext};base64,{base64.b64encode(open(side_bg, "rb").read()).decode()});
+def sidebar_bg():
+
+
+   st.markdown(
+      f"""
+      <style>
+      [data-testid="stSidebar"] > div:first-child {{
+        background-color: #1f1652;
+        
+      }}
+      </style>
+      """,
+      unsafe_allow_html=True,
+      )
+
+def get_base64(bin_file):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+def set_background(png_file):
+    bin_str = get_base64(png_file)
+    page_bg_img = '''
+    <style>
+    .stApp {
+    background-image: url("data:image/png;base64,%s");
+    background-size: cover;
+    }
+    </style>
+    ''' % bin_str
+    st.markdown(page_bg_img, unsafe_allow_html=True) 
+
+def topbar(topbar):
+
+   img_ext = 'png'
+   bin_str = get_base64(topbar)
+   st.markdown(
+      f"""
+      <style>
+      header.css-k0sv6k.e8zbici2 {{
+          background: url(data:image/{img_ext};base64,{bin_str});
+      }}
+      </style>
+        """,
+      unsafe_allow_html=True,
+      )      
+
 
 # Web app
 def main():
+
     st.set_page_config(page_title="screener", page_icon="📈")
 
     st.title("Resume Screener")
+    line_html = '''
+    <hr style="
+        border: none;
+        height: 2px;
+        background-color:  #E5CCFF;
+        ">
+    '''
+
+
+    # Display the colored line using st.markdown
+    st.markdown(line_html, unsafe_allow_html=True)
+    sidebar_bg()
+    set_background(r"C:/Users/aksha/Desktop/New folder/College/AIML mini proj/Resume-Screener/pages/3.gif")
+    topbar(r"C:/Users/aksha/Desktop/New folder/College/AIML mini proj/Resume-Screener/pages/Home.png")
+
+    st.markdown('<style>' +\
+            'div.stMarkdown div.css-5rimss { color: #E5CCFF; }' +\
+            'div.css-zt5igj {font-size:50}'+\
+            'div.stMarkdown span.css-10trblm {  color: #E5CCFF; }' +\
+            'div.css-8u98yl section.css-vjj2ce { background-color: #E5CCFF;  color: black}' +\
+            'span.css-pkbazv { color: #E5CCFF;}'+\
+            'span.css-17lntkn { color:#E5CCFF;}'+\
+            '</style>', unsafe_allow_html=True)
+
+    
 
     # Create a sidebar for upload
-    st.sidebar.header("Upload Resume")
-    uploaded_file = st.sidebar.file_uploader('Choose a resume', type=['txt', 'pdf'])
+    st.header("Upload Resume")
+    uploaded_file = st.file_uploader('', type=['txt', 'pdf'])
 
     if uploaded_file is not None:
         try:
@@ -112,8 +187,8 @@ def main():
         category_name = category_mapping.get(prediction_id, "Unknown")
 
         # Highlight the predicted category label
-        highlighted_category = f'<span style="font-size: 20px; color: #FF5733;">{category_name}</span>'
-        st.markdown(f"Predicted Category: {highlighted_category}", unsafe_allow_html=True)
+        highlighted_category = f'<span style="font-size: 40px; color: #FF5733;">{category_name}</span>'
+        st.markdown(f"Predicted Category:     {  highlighted_category}", unsafe_allow_html=True)
 
 
         prediction_probabilities = clf.predict_proba(input_features)[0]
