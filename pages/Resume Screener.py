@@ -5,6 +5,9 @@ import nltk
 from googleapiclient.discovery import build
 from urllib.parse import urlparse, parse_qs
 import base64
+import pdfplumber
+import os,tempfile
+
 
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -104,7 +107,19 @@ def topbar(topbar):
       </style>
         """,
       unsafe_allow_html=True,
-      )      
+      )  
+   
+
+def extract_text_from_pdf(pdf_path):
+    with pdfplumber.open(pdf_path) as pdf:
+        text = ''
+        for page in pdf.pages:
+            try:
+                text += page.extract_text()
+            except TypeError:
+                # Handle cases where the page extraction fails
+                pass
+    return text      
 
 
 # Web app
@@ -142,16 +157,13 @@ def main():
     # Create a sidebar for upload
     st.header("Upload Resume")
     uploaded_file = st.file_uploader('', type=['txt', 'pdf'])
+    
 
     if uploaded_file is not None:
-        try:
-            resume_bytes = uploaded_file.read()
-            resume_text = resume_bytes.decode('utf-8')
-        except UnicodeDecodeError:
-            # If UTF-8 decoding fails, try decoding with 'latin-1'
-            resume_text = resume_bytes.decode('latin-1')
-
+        file_path= uploaded_file.name
+        resume_text = extract_text_from_pdf(r"Resumes/"+file_path)
         cleaned_resume = clean_resume(resume_text)
+        print("cleaned text =====>",cleaned_resume)
         input_features = tfidfd.transform([cleaned_resume])
         prediction_id = clf.predict(input_features)[0]
 
