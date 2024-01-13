@@ -140,8 +140,8 @@ def main():
     # Display the colored line using st.markdown
     st.markdown(line_html, unsafe_allow_html=True)
     sidebar_bg()
-    set_background(r"C:/Users/aksha/Desktop/New folder/College/AIML mini proj/Resume-Screener/pages/3.gif")
-    topbar(r"C:/Users/aksha/Desktop/New folder/College/AIML mini proj/Resume-Screener/pages/Home.png")
+    set_background(r"pages/3.gif")
+    topbar(r"pages/Home.png")
 
     st.markdown('<style>' +\
             'div.stMarkdown div.css-5rimss { color: #E5CCFF; }' +\
@@ -160,8 +160,13 @@ def main():
     
 
     if uploaded_file is not None:
-        file_path= uploaded_file.name
-        resume_text = extract_text_from_pdf(r"Resumes/"+file_path)
+        # Use tempfile to store the PDF temporarily
+        temp_pdf = tempfile.NamedTemporaryFile(delete=False)
+        temp_pdf.write(uploaded_file.read())
+
+        # Pass the temporary PDF file to extract_text_from_pdf
+        resume_text = extract_text_from_pdf(temp_pdf.name)
+        temp_pdf.close()
         cleaned_resume = clean_resume(resume_text)
         print("cleaned text =====>",cleaned_resume)
         input_features = tfidfd.transform([cleaned_resume])

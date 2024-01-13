@@ -103,9 +103,9 @@ def main():
 
     # Display the colored line using st.markdown
     st.markdown(line_html, unsafe_allow_html=True)
-    sidebar_bg(r"C:/Users/aksha/Desktop/New folder/College/AIML mini proj/Resume-Screener/pages/2.gif")
-    set_background(r"C:/Users/aksha/Desktop/New folder/College/AIML mini proj/Resume-Screener/pages/3.gif")
-    topbar(r"C:/Users/aksha/Desktop/New folder/College/AIML mini proj/Resume-Screener/pages/Home.png")
+    sidebar_bg(r"pages/2.gif")
+    set_background(r"pages/3.gif")
+    topbar(r"pages/Home.png")
     
     st.markdown('<style>' +\
             'div.stMarkdown div.css-5rimss { color: #E5CCFF; }' +\
@@ -143,6 +143,13 @@ def main():
             image_bytes = uploaded_image.read()
             pdf_filename = create_pdf(data, image_bytes)
             st.success("PDF generated successfully!")
+            st.download_button(
+                label="Download PDF",
+                data=read_pdf_file(pdf_filename),
+                file_name="resume.pdf",
+                key="download_button",
+                help="Click to download the generated PDF file."
+            )
         else:
             st.warning("Please upload an image before generating the PDF.")
 
@@ -153,7 +160,7 @@ def main():
 
 
 def create_pdf(data, image):
-    pdf_filename = "./Resumes/resume.pdf"
+    pdf_filename = "resume.pdf"
 
     # Create PDF document
     c = canvas.Canvas(pdf_filename, pagesize=letter)
